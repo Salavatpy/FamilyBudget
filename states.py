@@ -6,3 +6,4 @@ class States(StatesGroup):
     delete_category = State()
     add_expenses = State()
     choose_category = State()
+    delete_expense = State()

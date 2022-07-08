@@ -11,6 +11,14 @@ def get_all_categories():
     return list(result)
 
 
+def get_10_expenses():
+    session = Session()
+    result = []
+    for i in session.query(Expenses).limit(10):
+        result.append(f'{i.id} {i.category} сумма {i.amount} тенге')
+    return list(result)
+
+
 def get_month_expenses():
     session = Session()
     result = []
@@ -52,6 +60,7 @@ def get_today_expenses_summary():
         summary += i.amount
     return summary
 
+
 def check_categories(message):
     session = Session()
     category = session.query(Categories).filter(Categories.name == message.text).first()
@@ -73,5 +82,21 @@ def add_new_expenses(amount, category):
     session = Session()
     expense = Expenses(amount=amount, category=category)
     session.add(expense)
+    session.commit()
+    session.close()
+
+
+def delete_categorie(category):
+    session = Session()
+    category = session.query(Categories).filter(Categories.name == category).first()
+    session.delete(category)
+    session.commit()
+    session.close()
+
+
+def delete_expense(expense_id):
+    session = Session()
+    expense = session.query(Expenses).filter(Expenses.id == expense_id).first()
+    session.delete(expense)
     session.commit()
     session.close()

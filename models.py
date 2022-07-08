@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship
 import datetime
@@ -11,7 +13,8 @@ class Categories(Base):
     name = Column(String)
     expenses = relationship('Expenses')
 
-    def __init__(self, name):
+    def __init__(self, name, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         self.name = name
 
     def __str__(self) -> str:
@@ -29,6 +32,7 @@ class Expenses(Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     category = Column(String, ForeignKey('categories.name'))
 
-    def __init__(self, amount, category):
+    def __init__(self, amount, category, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         self.amount = amount
         self.category = category

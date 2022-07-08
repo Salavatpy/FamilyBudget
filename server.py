@@ -1,4 +1,3 @@
-"""Сервер Telegram бота, запускаемый непосредственно"""
 
 import logging
 
@@ -10,7 +9,7 @@ from database import create_db
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from states import States
 from aiogram.dispatcher import FSMContext
-from keyboard import kb_menu, creating_categories_menu, kb_exit
+from keyboard import kb_menu, creating_categories_menu, kb_exit, creating_expenses_menu, deleting_categories_menu
 import os
 
 TOKEN = os.getenv('BOT_TOKEN')
@@ -43,26 +42,67 @@ async def send_welcome(message: types.Message):
     await message.answer("Бот для учёта финансов\n\n", reply_markup=kb_menu)
 
 
-# @dp.message_handler(lambda message: message.text.startswith('/del'))
-# async def del_expense(message: types.Message):
-#     """Удаляет одну запись о расходе по её идентификатору"""
-#     row_id = int(message.text[4:])
-#     expenses.delete_expense(row_id)
-#     answer_message = "Удалил"
-#     await message.answer(answer_message)
-
-
 @dp.message_handler(text=['Все категории'])
 async def categories_list(message: types.Message):
     """Отправляет список категорий расходов"""
-    categories = handlers.get_all_categories()
-    answer_message = "Категории трат:\n\n* " + "\n* ".join(categories)
-    await message.answer(answer_message, reply_markup=kb_menu)
+    if handlers.get_all_categories():
+        categories = handlers.get_all_categories()
+        answer_message = "Категории трат:\n\n* " + "\n* ".join(categories)
+        await message.answer(answer_message, reply_markup=kb_menu)
+    else:
+        await message.answer("Нет категорий", reply_markup=kb_menu)
+
+
+@dp.message_handler(text=['Удалить категорию'])
+async def delete_category(message: types.Message):
+    if handlers.get_all_categories():
+        answer_message = "Выберите категорию, которую хотите удалить"
+        await message.answer(answer_message, reply_markup=deleting_categories_menu())
+        await States.delete_category.set()
+    else:
+        await message.answer("Нет категорий", reply_markup=kb_menu)
+
+
+@dp.callback_query_handler(lambda call: True, state=States.delete_category)
+async def delete_category_back(callback_query: types.CallbackQuery, state: FSMContext):
+    if str(callback_query.data) == "Выход":
+        await bot.send_message(callback_query.from_user.id, "Выход в гланое меню",
+                               reply_markup=kb_menu)
+        await state.finish()
+    else:
+        handlers.delete_categorie(str(callback_query.data))
+        await bot.send_message(callback_query.from_user.id, f'Удалена категория {callback_query.data} !',
+                               reply_markup=kb_menu)
+        await state.finish()
+
+
+@dp.message_handler(text=['Удалить затрату'])
+async def delete_expense(message: types.Message):
+    if handlers.get_10_expenses():
+        answer_message = "Выберите затрату, которую хотите удалить"
+        await message.answer(answer_message, reply_markup=creating_expenses_menu())
+        await States.delete_expense.set()
+    else:
+        await message.answer("Нет затрат", reply_markup=kb_menu)
+
+
+@dp.callback_query_handler(lambda call: True, state=States.delete_expense)
+async def delete_expense_back(callback_query: types.CallbackQuery, state: FSMContext):
+    if str(callback_query.data) == "Выход":
+        await bot.send_message(callback_query.from_user.id, "Выход в гланое меню",
+                               reply_markup=kb_menu)
+        await state.finish()
+    else:
+        expense_id = (str(callback_query.data).split())[0]
+        handlers.delete_expense(expense_id)
+        await bot.send_message(callback_query.from_user.id, f'Удалена затрата {callback_query.data} !',
+                               reply_markup=kb_menu)
+        await state.finish()
 
 
 @dp.message_handler(text=['Затраты за месяц'])
 async def expenses_list(message: types.Message):
-    """Отправляет список категорий расходов"""
+    """Отправляет список затрат за месяц"""
     expenses = handlers.get_month_expenses()
     summary = handlers.get_month_expenses_summary()
     if not expenses:
@@ -74,7 +114,7 @@ async def expenses_list(message: types.Message):
 
 @dp.message_handler(text=['Затраты за день'])
 async def today_expenses_list(message: types.Message):
-    """Отправляет список категорий расходов"""
+    """Отправляет список затрат за день"""
     expenses = handlers.get_today_expenses()
     summary = handlers.get_today_expenses_summary()
     if not expenses:
@@ -84,20 +124,17 @@ async def today_expenses_list(message: types.Message):
         await message.answer(answer_message, reply_markup=kb_menu)
 
 
-# @dp.message_handler(lambda message: message.text.startswith('/addcategory'))
-# async def add_categorie(message: types.Message):
-#     """Добавляет категорию расходов"""
-#     add_new_category(message.text[13:])
-#     answer_message = "Создана новая категория\n\n* "
-#     await message.answer(answer_message)
-
 @dp.message_handler(text=['Добавить затрату'])
 async def add_expenses(message: types.Message):
-    await message.answer('Добавь новую затрату \n Введи ее сумму', reply_markup=kb_exit)
-    await States.add_expenses.set()
+    """Добавляет затрату"""
+    if handlers.get_all_categories():
+        await message.answer('Добавь новую затрату \n Введи ее сумму', reply_markup=kb_exit)
+        await States.add_expenses.set()
+    else:
+        await message.answer('Сначала добавьте категории', reply_markup=kb_menu)
 
 
-@dp.message_handler(text=['Выход'], state=[States.add_expenses, States.choose_category])
+@dp.message_handler(text=['Выход'], state=[States.add_expenses, States.add_category])
 async def quit_the_expenses(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer('Выход в главное меню', reply_markup=kb_menu)
@@ -116,23 +153,26 @@ async def add_expenses_2(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: True, state=States.choose_category)
 async def choose_category(callback_query: types.CallbackQuery, state: FSMContext):
-    amount = await state.get_data('add_expenses')
-    handlers.add_new_expenses(amount['add_expenses'], str(callback_query.data))
-    await bot.send_message(callback_query.from_user.id, f'Создана новая затрата! {callback_query.data}',
-                           reply_markup=kb_menu)
-    await state.finish()
+    if str(callback_query.data) == "Добавить категорию":
+        await bot.send_message(callback_query.from_user.id, text='Добавь новую категорию, \n Введи ее название')
+        await States.add_category.set()
+    elif str(callback_query.data) == "Выход":
+        await bot.send_message(callback_query.from_user.id, "Выход в гланое меню",
+                               reply_markup=kb_menu)
+        await state.finish()
+    else:
+        amount = await state.get_data('add_expenses')
+        handlers.add_new_expenses(amount['add_expenses'], str(callback_query.data))
+        await bot.send_message(callback_query.from_user.id, f'Создана новая затрата! {callback_query.data}',
+                               reply_markup=kb_menu)
+        await state.finish()
 
 
-@dp.message_handler(text=['Добваить категорию'])
+@dp.message_handler(text=['Добавить категорию'])
 async def add_category(message: types.Message):
+    """Добавляет категорию"""
     await message.answer('Добавь новую категорию, \n Введи ее название', reply_markup=kb_exit)
     await States.add_category.set()
-
-
-@dp.message_handler(text=['Выход'], state=States.add_category)
-async def quit_the_expenses(message: types.Message, state: FSMContext):
-    await state.finish()
-    await message.answer('Выход в главное меню', reply_markup=kb_menu)
 
 
 @dp.message_handler(state=States.add_category)
@@ -148,51 +188,6 @@ async def add_category_2(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-# @dp.message_handler(commands=['today'])
-# async def today_statistics(message: types.Message):
-#     """Отправляет сегодняшнюю статистику трат"""
-#     answer_message = expenses.get_today_statistics()
-#     await message.answer(answer_message)
-
-
-# @dp.message_handler(commands=['month'])
-# async def month_statistics(message: types.Message):
-#     """Отправляет статистику трат текущего месяца"""
-#     answer_message = expenses.get_month_statistics()
-#     await message.answer(answer_message)
-
-
-# @dp.message_handler(commands=['expenses'])
-# async def list_expenses(message: types.Message):
-#     """Отправляет последние несколько записей о расходах"""
-#     last_expenses = expenses.last()
-#     if not last_expenses:
-#         await message.answer("Расходы ещё не заведены")
-#         return
-
-#     last_expenses_rows = [
-#         f"{expense.amount} руб. на {expense.category_name} — нажми "
-#         f"/del{expense.id} для удаления"
-#         for expense in last_expenses]
-#     answer_message = "Последние сохранённые траты:\n\n* " + "\n\n* "\
-#             .join(last_expenses_rows)
-#     await message.answer(answer_message)
-
-
-# @dp.message_handler()
-# async def add_expense(message: types.Message):
-#     """Добавляет новый расход"""
-#     try:
-#         expense = expenses.add_expense(message.text)
-#     except exceptions.NotCorrectMessage as e:
-#         await message.answer(str(e))
-#         return
-#     answer_message = (
-#         f"Добавлены траты {expense.amount} руб на {expense.category_name}.\n\n"
-#         f"{expenses.get_today_statistics()}")
-#     await message.answer(answer_message)
-
-
 if __name__ == '__main__':
     create_db()
     logging.basicConfig(level=logging.INFO)
@@ -205,4 +200,3 @@ if __name__ == '__main__':
         host=WEBAPP_HOST,
         port=WEBAPP_PORT,
     )
-
