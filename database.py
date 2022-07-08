@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import os
 
-DATABASE_NAME = 'aplication.sqlite'
-
-engine = create_engine(f'sqlite:///{DATABASE_NAME}')
+engine = create_engine(os.getenv("DATABASE_URL"))
 Session = sessionmaker(bind=engine)
 
 Base = declarative_base()
