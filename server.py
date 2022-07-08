@@ -97,7 +97,7 @@ async def add_expenses(message: types.Message):
     await States.add_expenses.set()
 
 
-@dp.message_handler(text=['Выход'], state=States.add_expenses)
+@dp.message_handler(text=['Выход'], state=[States.add_expenses, States.choose_category])
 async def quit_the_expenses(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer('Выход в главное меню', reply_markup=kb_menu)
