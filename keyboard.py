@@ -24,8 +24,8 @@ kb_exit = ReplyKeyboardMarkup(
 
 def creating_categories_menu():
     list_of_categories = []
+    categories_menu = InlineKeyboardMarkup(row_width=3)
     for i in get_all_categories():
         list_of_categories.append(InlineKeyboardButton(text=i, callback_data=i))
-        categories_menu = InlineKeyboardMarkup(row_width=3)
         categories_menu.add(*list_of_categories)
     return categories_menu
