@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="74ca0b7c-aafb-4afd-81f8-c26c14f6bb88" name="Changes" comment="PosgreSQL added 2">
+    <list default="true" id="74ca0b7c-aafb-4afd-81f8-c26c14f6bb88" name="Changes" comment="PosgreSQL added 3">
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -162,7 +162,7 @@
       <workItem from="1656477270816" duration="813000" />
       <workItem from="1656487889224" duration="2349000" />
       <workItem from="1656653882290" duration="46000" />
-      <workItem from="1657260919608" duration="17486000" />
+      <workItem from="1657260919608" duration="17643000" />
     </task>
     <task id="LOCAL-00001" summary="deployready">
       <created>1657261868940</created>
@@ -213,7 +213,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657281225784</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="PosgreSQL added 3">
+      <created>1657281522814</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1657281522814</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -237,7 +244,8 @@
     <MESSAGE value="Updates1" />
     <MESSAGE value="PosgreSQL added" />
     <MESSAGE value="PosgreSQL added 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="PosgreSQL added 2" />
+    <MESSAGE value="PosgreSQL added 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="PosgreSQL added 3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/server_py$server.coverage" NAME="server Coverage Results" MODIFIED="1657279771272" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

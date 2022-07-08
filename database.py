@@ -3,11 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
-database_url = os.getenv('DATABASE_URL')
-
-if database_url.startswith('postgres://'):
-    database_url.replace('postgres://', 'postgresql+psycopg2://')
-
+database_url = os.getenv('DATABASE_URL').replace('postgres://', 'postgresql://')
 engine = create_engine(database_url)
 Session = sessionmaker(bind=engine)
 
