@@ -30,7 +30,7 @@ class Expenses(Base):
 
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
-    created_date = Column(DateTime, server_default=datetime.datetime.now(pytz.timezone("Asia/Almaty")))
+    created_date = Column(DateTime, default=datetime.datetime.now())
     category = Column(Integer, ForeignKey('categories.id'), default=None)
 
     def __init__(self, amount, category, *args: Any, **kwargs: Any):
