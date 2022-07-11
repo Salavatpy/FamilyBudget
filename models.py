@@ -10,7 +10,7 @@ class Categories(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    expenses = relationship('Expenses')
+    expenses = relationship('expenses')
 
     def __init__(self, name, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -29,7 +29,7 @@ class Expenses(Base):
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
     created_date = Column(DateTime(timezone=True), server_default=func.now())
-    category = Column(String, ForeignKey('Categories.name'))
+    category = Column(String, ForeignKey('categories.name'))
 
     def __init__(self, amount, category, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)

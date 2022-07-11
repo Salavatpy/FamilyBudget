@@ -164,7 +164,7 @@
       <workItem from="1656653882290" duration="46000" />
       <workItem from="1657260919608" duration="17694000" />
       <workItem from="1657421779146" duration="40000" />
-      <workItem from="1657508728092" duration="919000" />
+      <workItem from="1657508728092" duration="1095000" />
     </task>
     <task id="LOCAL-00001" summary="deployready">
       <created>1657261868940</created>
@@ -243,7 +243,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657509464365</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="PosgreSQL added 6">
+      <created>1657509662608</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1657509662608</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
