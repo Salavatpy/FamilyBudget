@@ -1,3 +1,4 @@
+import datetime
 from typing import Any
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, func
@@ -28,7 +29,7 @@ class Expenses(Base):
 
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
-    created_date = Column(DateTime(timezone=True), server_default=func.now())
+    created_date = Column(DateTime(timezone=True), default=datetime.datetime.utcnow())
     category = Column(Integer, ForeignKey('categories.id'), default=None)
 
     def __init__(self, amount, category, *args: Any, **kwargs: Any):
