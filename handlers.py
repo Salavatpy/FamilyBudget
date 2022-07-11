@@ -16,7 +16,7 @@ def get_10_expenses():
     result = []
     for i in session.query(Expenses).limit(10):
         category = session.query(Categories).filter(Categories.id == i.category).first()
-        result.append(f'{i.id} {category} сумма {i.amount} тенге')
+        result.append(f'{i.id} {category.name} сумма {i.amount} тенге')
     return list(result)
 
 
@@ -27,7 +27,7 @@ def get_month_expenses():
     filter_after = datetime.today() - timedelta(days=30)
     for i in session.query(Expenses).filter(Expenses.created_date >= filter_after).all():
         category = session.query(Categories).filter(Categories.id == i.category).first()
-        expense = f'Категория {category}, затрата {i.amount} тенге, дата {i.created_date.date()}'
+        expense = f'Категория {category.name}, затрата {i.amount} тенге, дата {i.created_date.date()}'
         result.append(expense)
         summary += i.amount
     return list(result)
@@ -49,7 +49,7 @@ def get_today_expenses():
     filter_after = datetime.today() - timedelta(days=1)
     for i in session.query(Expenses).filter(Expenses.created_date >= filter_after).all():
         category = session.query(Categories).filter(Categories.id == i.category).first()
-        expense = f'Категория {category}, затрата {i.amount} тенге, время {i.created_date.time().strftime("%H:%M")}'
+        expense = f'Категория {category.name}, затрата {i.amount} тенге, время {i.created_date.time().strftime("%H:%M")}'
         result.append(expense)
         summary += i.amount
     return list(result)
