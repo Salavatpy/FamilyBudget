@@ -10,7 +10,7 @@ class Categories(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    expenses = relationship('expenses')
+    expenses = relationship('expenses.category')
 
     def __init__(self, name, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
