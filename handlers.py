@@ -80,7 +80,8 @@ def add_new_category(message):
 
 def add_new_expenses(amount, category):
     session = Session()
-    expense = Expenses(amount=amount, category=category)
+    category = session.query(Categories).filter(Categories.name == category).first()
+    expense = Expenses(amount=amount, category=category.id)
     session.add(expense)
     session.commit()
     session.close()
