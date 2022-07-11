@@ -1,9 +1,7 @@
 from typing import Any
 
-import pytz
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, func
 from sqlalchemy.orm import relationship
-import datetime
 from database import Base
 
 
@@ -30,8 +28,8 @@ class Expenses(Base):
 
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
-    created_date = Column(DateTime, default=datetime.datetime.now(tz=pytz.utc))
-    category = Column(String, ForeignKey('categories.name'))
+    created_date = Column(DateTime(timezone=True), server_default=func.now())
+    category = Column(String, ForeignKey('Categories.name'))
 
     def __init__(self, amount, category, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
