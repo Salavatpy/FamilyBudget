@@ -1,5 +1,5 @@
 import pytz
-import datetime
+from datetime import datetime
 from models import Categories, Expenses
 from database import Session
 from datetime import datetime, timedelta
@@ -94,7 +94,7 @@ def add_new_expenses(amount, category):
     session = Session()
     category = session.query(Categories).filter(Categories.name == category).first()
     expense = Expenses(amount=amount, category=category.id,
-                       created_date=datetime.datetime.now(pytz.timezone('Asia/Almaty')))
+                       created_date=datetime.now(pytz.timezone('Asia/Almaty')))
     session.add(expense)
     session.commit()
     session.close()
