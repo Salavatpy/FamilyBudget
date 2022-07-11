@@ -29,7 +29,7 @@ class Expenses(Base):
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
     created_date = Column(DateTime(timezone=True), server_default=func.now())
-    category = Column(Integer, ForeignKey('categories.id'))
+    category = Column(Integer, ForeignKey('categories.id'), default=None)
 
     def __init__(self, amount, category, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
